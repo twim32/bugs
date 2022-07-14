@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width, initial-scale=1">
+<title>Bug Sprint</title>
+</head>
+<body><noscript><meta HTTP-EQUIV="refresh" content="0;url='http://bugs.progue.net/?PageSpeed=noscript'" /><style><!--table,div,span,font,p{display:none} --></style><div style="display:block">Please click <a href="http://bugs.progue.net/?PageSpeed=noscript">here</a> if you are not redirected within a few seconds.</div></noscript>
+<h1>Bug Sprint</h1>
+<button type=button id=start>Go!</button>
+<button type=button id=reset>Reset</button>
+<div id=game style=white-space:pre-wrap></div>
+</body>
+<script defer>
+		class BugSprint
+		{
+			elem;
+			bugs = [];
+			lenght = 50;
+			amount;
+
+			constructor(elem)
+			{
+				this.elem = elem;
+				this.bugs = [];
+			}
+
+			init(amount = 4) {
+				this.bugs = [];
+				this.amount = amount;
+				for(let i = 0; i < amount; i++) {
+					this.bugs.push({
+						name: i,
+						distance: 0,
+					});
+				}
+			}
+
+			draw() {
+				let lenght = this.lenght;
+				let content = Printer.line(lenght);
+				this.bugs.forEach((bug) => {  content += Printer.bug(bug) +  Printer.line(lenght) });
+				this.elem.innerHTML = content;
+			}
+
+			turn() {
+				let key = this.randomNumber(0, this.bugs.length);
+				let bug = this.bugs[key];
+				bug.distance += 1;
+				
+				this.draw();
+				if(this.bugs[key].distance >= this.lenght) {
+					alert(`Bug ${this.bugs[key].name} wins!`);
+					this.reset();
+				}
+				console.log(bug);
+			}
+
+			randomNumber(min, max) { 
+			    return Math.floor(Math.random() * (max - min) + min);
+			} 
+
+			run()
+			{
+				this.timer = setInterval(function(s) {
+					s.turn();
+				}, 100, s);		
+			}
+
+			reset()
+			{
+				clearInterval(this.timer);
+				this.init();
+			}
+
+		}
+
+		class Printer
+		{
+			static line(len)
+			{
+				return "-".repeat(len) + "\n";
+			}
+
+			static bug(bug)
+			{
+				return `${bug.name}\n` + " ".repeat(bug.distance) + '*' + "\n";
+			}
+		}
+
+		let s = new BugSprint(document.getElementById('game'))
+		s.init(4);
+		s.draw();
+
+		document.getElementById('start').addEventListener('click', (e) => {
+			s.run();
+		});
+
+		document.getElementById('reset').addEventListener('click', (e) => {
+			document.location.reload();
+		});
+
+		console.log(s);
+
+	</script>
+</html>
